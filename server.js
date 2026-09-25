@@ -1,7 +1,12 @@
 import express from "express";
+import fs from "fs";
+import swaggerUi from "swagger-ui-express";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const swaggerDocument = JSON.parse(fs.readFileSync("./openapi.json", "utf8"));
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json()); // Middleware to parse JSON request bodies
 
