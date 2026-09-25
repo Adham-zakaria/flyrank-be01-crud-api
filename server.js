@@ -55,6 +55,45 @@ app.post("/tasks", (req, res) => {
   res.status(201).json(newTask);
 });
 
+app.put("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id);
+  const taskIndex = tasks.findIndex((t) => t.id === taskId);
+
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  }
+
+  const { title, done } = req.body;
+
+  if (title !== undefined) {
+    if (title.trim() === "") {
+      return res.status(400).json({ error: "Title cannot be empty" });
+    }
+    tasks[taskIndex].title = title.trim();
+  }
+
+  if (done !== undefined) {
+    if (typeof done !== "boolean") {
+      return res.status(400).json({ error: "Done must be a boolean" });
+    }
+    tasks[taskIndex].done = done;
+  }
+
+  res.status(200).json(tasks[taskIndex]);
+});
+
+app.delete('/tasks/:id', (req, res) => {
+  const taskId = parseInt(req.params.id);
+  const taskIndex = tasks.findIndex((t) => t.id === taskId);
+
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  }
+
+  tasks.splice(taskIndex, 1);
+  res.status(200).json({ message: `Task ${req.params.id} deleted` });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is at http://localhost:${PORT}`);
 });
